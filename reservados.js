@@ -8,4 +8,4 @@
    Exemplo: se vendeu os números 3, 17 e 42, deixe assim:
      window.RIFA_RESERVADOS = [3, 17, 42];
    ============================================================ */
-window.RIFA_RESERVADOS = [];
+window.RIFA_RESERVADOS = [10,3];
