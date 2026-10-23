@@ -1,171 +1,567 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rifa</title>
-  <meta name="description" content="Escolha seus números do sorteio.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-...
-<script src="js/config.js"></script>
-<script src="js/reservados.js"></script>
-<script src="js/app.js"></script>
-<img src="opd.jpg" ...>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rifa</title>
+<meta name="description" content="Escolha seus números do sorteio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+[hidden]{display:none !important}
+:root{--bg:#05060a;--bg-2:#0a0b14;--surface:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--cyan:#22d3ee;--cyan-2:#67e8f9;--purple:#a855f7;--purple-2:#c084fc;--pink:#ec4899;--pink-2:#f472b6;--red:#f87171;--red-2:#fca5a5;--white:#ffffff;--text:#e2e8f0;--text-dim:#94a3b8;--radius:18px;--max:1180px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;overflow-x:hidden;min-height:100vh}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:.35;animation:float 22s ease-in-out infinite}
+.o1{width:500px;height:500px;background:var(--cyan);top:-120px;left:-120px}
+.o2{width:600px;height:600px;background:var(--purple);bottom:-180px;right:-160px;animation-delay:-6s;opacity:.3}
+.o3{width:380px;height:380px;background:var(--pink);top:45%;left:65%;animation-delay:-12s;opacity:.28}
+.o4{width:300px;height:300px;background:var(--red);top:15%;left:35%;animation-delay:-16s;opacity:.22}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-50px) scale(1.12)}66%{transform:translate(-40px,50px) scale(.94)}}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:60px;align-items:center;padding-top:80px;padding-bottom:100px}
+.eyebrow{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);color:var(--cyan-2);font-size:.82rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-family:'Unbounded',sans-serif;font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.02;letter-spacing:-.02em;background:linear-gradient(120deg,var(--cyan),var(--purple),var(--pink),var(--cyan));background-size:300% 300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradient 8s ease infinite}
+@keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.lead{margin-top:22px;color:var(--text-dim);font-size:1.1rem;max-width:520px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:34px 0}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 22px;min-width:130px;backdrop-filter:blur(8px)}
+.stat b{display:block;font-family:'Unbounded',sans-serif;font-size:1.4rem;color:var(--white);font-weight:800}
+.stat span{font-size:.78rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.6px}
+.prize{aspect-ratio:4/5;width:100%;max-width:420px;justify-self:center;background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(168,85,247,.08),rgba(236,72,153,.08));border:1px solid var(--border);border-radius:24px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.prize img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;border-radius:24px}
+.prize-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;border-radius:24px;background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(168,85,247,.12),rgba(236,72,153,.12))}
+.fallback-text{font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:700;color:var(--white);opacity:.85}
+.fallback-hint{font-size:.78rem;color:var(--text-dim)}
+.fallback-hint code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:.72rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 28px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-size:1rem;font-weight:600;text-decoration:none;transition:transform .18s ease,box-shadow .25s ease,background .25s ease;position:relative;overflow:hidden}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-primary{background:linear-gradient(120deg,var(--cyan),var(--purple),var(--pink));background-size:200% 200%;color:#fff;box-shadow:0 10px 30px -8px rgba(168,85,247,.55);animation:gradient 6s ease infinite}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 40px -8px rgba(236,72,153,.6)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan-2)}
+.w100{width:100%}
+section{padding:80px 0;scroll-margin-top:30px}
+.section-head{margin-bottom:36px}
+.section-head h2{font-family:'Unbounded',sans-serif;font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;color:var(--white);letter-spacing:-.01em}
+.section-head p{margin-top:8px;color:var(--text-dim)}
+.status-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.pill{padding:9px 16px;border-radius:999px;font-size:.9rem;font-weight:500;border:1px solid var(--border);background:var(--surface);backdrop-filter:blur(6px)}
+.pill b{font-family:'Unbounded',sans-serif;font-weight:700;margin-right:6px}
+.pill-cyan{border-color:rgba(34,211,238,.35);color:var(--cyan-2)}
+.pill-red{border-color:rgba(248,113,113,.35);color:var(--red-2)}
+.pill-pink{border-color:rgba(236,72,153,.35);color:var(--pink-2)}
+.progress{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:8px}
+.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));background-size:200% 100%;border-radius:999px;transition:width .8s cubic-bezier(.2,.8,.2,1);animation:gradient 4s linear infinite}
+.progress-txt{font-size:.85rem;color:var(--text-dim);margin-bottom:34px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start}
+.legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px;font-size:.85rem;color:var(--text-dim)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block}
+.dot-cyan{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.dot-pink{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px}
+.num{aspect-ratio:1;border-radius:10px;border:1px solid var(--border);background:var(--bg-2);color:var(--text);font-family:'Unbounded',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .22s ease;animation:fadeUp .35s ease both;animation-delay:min(calc(var(--i,0)*6ms),450ms);position:relative}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+.num:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan-2);box-shadow:0 0 0 1px var(--cyan),0 0 20px -2px var(--cyan);transform:translateY(-2px) scale(1.05)}
+.num.sel{background:linear-gradient(135deg,var(--pink),var(--purple));border-color:var(--pink-2);color:#fff;box-shadow:0 0 24px -2px var(--pink);animation:pulse 1.6s ease-in-out infinite;transform:scale(1.05)}
+@keyframes pulse{0%,100%{box-shadow:0 0 20px -2px var(--pink)}50%{box-shadow:0 0 32px 2px var(--pink-2)}}
+.num.removendo{animation:removendo .35s cubic-bezier(.5,0,1,1) forwards;pointer-events:none}
+@keyframes removendo{0%{opacity:1;transform:scale(1);filter:blur(0)}100%{opacity:0;transform:scale(.3) rotate(30deg);filter:blur(4px)}}
+.grid.re-render .num{animation:none}
+.summary{position:sticky;top:24px}
+.summary-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;backdrop-filter:blur(12px);position:relative;box-shadow:0 20px 60px -20px rgba(168,85,247,.3)}
+.summary-inner::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(120deg,var(--cyan),var(--purple),var(--pink),var(--cyan));background-size:300% 300%;animation:gradient 6s linear infinite;z-index:-1;opacity:.6}
+.summary h3{font-family:'Unbounded',sans-serif;font-size:1.15rem;color:var(--white);margin-bottom:14px}
+.empty{color:var(--text-dim);font-size:.9rem;margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.chip{padding:5px 10px;border-radius:8px;font-size:.78rem;font-weight:600;background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.4);color:var(--pink-2);font-family:'Unbounded',sans-serif;animation:fadeUp .25s ease both}
+.totais{border-top:1px dashed var(--border);padding-top:14px;margin-bottom:20px}
+.totais > div{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.totais dt{color:var(--text-dim);font-size:.9rem}
+.totais dd{font-family:'Unbounded',sans-serif;font-weight:700;color:var(--white);font-size:1.05rem}
+#btnLimpar{margin-top:10px}
+.rules{list-style:none;display:grid;gap:14px;max-width:780px}
+.rules li{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:flex;gap:16px;align-items:center;transition:transform .2s ease,border-color .2s ease}
+.rules li:hover{transform:translateX(4px);border-color:var(--cyan)}
+.rules li span{font-family:'Unbounded',sans-serif;font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;min-width:36px}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.info > div{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color .2s ease}
+.info > div:hover{border-color:var(--purple)}
+.info dt{font-size:.75rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text-dim);margin-bottom:8px}
+.info dd{font-family:'Unbounded',sans-serif;font-weight:700;color:var(--white);font-size:1.05rem}
+.footer{padding:60px 0 40px;text-align:center;color:var(--text-dim);font-size:.85rem;border-top:1px solid var(--border);margin-top:40px}
+.footer .small{font-size:.78rem;margin-top:6px;opacity:.7}
+.modal{border:none;border-radius:20px;padding:0;background:var(--bg-2);color:var(--text);max-width:460px;width:calc(100% - 32px);box-shadow:0 30px 80px -20px rgba(0,0,0,.9),0 0 0 1px var(--border);animation:bounceIn .35s cubic-bezier(.2,1.3,.3,1)}
+.modal::backdrop{background:rgba(5,6,10,.75);backdrop-filter:blur(6px)}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.85) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.modal form{padding:32px}
+.modal h3{font-family:'Unbounded',sans-serif;font-size:1.35rem;color:var(--white);margin-bottom:6px}
+.modal-sub{color:var(--text-dim);font-size:.9rem;margin-bottom:22px}
+.resumo-modal{background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:.88rem}
+.resumo-modal b{color:var(--pink-2);font-family:'Unbounded',sans-serif}
+.modal label{display:block;margin-bottom:14px}
+.modal label span{display:block;font-size:.8rem;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.modal input{width:100%;padding:13px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--white);font-family:inherit;font-size:1rem;transition:border-color .2s ease,box-shadow .2s ease}
+.modal input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.modal-erro{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:var(--red-2);padding:10px 14px;border-radius:10px;font-size:.85rem;margin-top:14px}
+.modal-ok{text-align:center;padding:36px 32px}
+.ok-icon{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;font-weight:900;box-shadow:0 0 40px -4px var(--purple);animation:pulse 2s ease-in-out infinite}
+.codigo{font-family:'Unbounded',sans-serif;font-size:1.6rem;background:linear-gradient(120deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;margin:14px 0;letter-spacing:2px}
+.modal-ok .small{color:var(--text-dim);font-size:.85rem;margin-bottom:22px}
+.ok-actions{display:grid;gap:10px;margin:18px 0 6px}
+.ok-hint{color:var(--text-dim);font-size:.78rem;margin-top:6px;line-height:1.5}
+.profile-link{display:block;text-align:center;font-size:.82rem;color:var(--text-dim);margin-top:12px;text-decoration:none;transition:color .2s ease}
+.profile-link:hover{color:var(--pink-2)}
+.profile-link span{color:var(--pink-2);font-weight:600}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,120%);background:var(--bg-2);border:1px solid var(--border);color:var(--white);padding:13px 22px;border-radius:12px;box-shadow:0 20px 50px -10px rgba(0,0,0,.8);font-size:.9rem;z-index:999;transition:transform .35s ease;max-width:90vw}
+.toast.show{transform:translate(-50%,0)}
+.toast.erro{border-color:var(--red);color:var(--red-2)}
+@media (max-width:960px){.hero{grid-template-columns:1fr;gap:40px;padding-top:50px;padding-bottom:70px}.prize{max-width:340px;order:-1}.layout{grid-template-columns:1fr}.summary{position:static}.grid{grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}}
+@media (max-width:480px){.wrap{padding:0 16px}.stat{padding:11px 16px;min-width:110px}.stat b{font-size:1.15rem}.grid{grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}.num{font-size:.72rem;border-radius:8px}.modal form{padding:24px 20px}.legend{font-size:.78rem;gap:12px}}
+</style>
 </head>
 <body>
 
-  <div class="orbs" aria-hidden="true">
-    <span class="orb o1"></span><span class="orb o2"></span>
-    <span class="orb o3"></span><span class="orb o4"></span>
-  </div>
+<div class="orbs" aria-hidden="true">
+  <span class="orb o1"></span><span class="orb o2"></span>
+  <span class="orb o3"></span><span class="orb o4"></span>
+</div>
 
-  <header class="hero wrap">
-    <div class="hero-text">
-      <p class="eyebrow" id="eyebrow">Sorteio oficial</p>
-      <h1 id="titulo">Rifa</h1>
-      <p class="lead">Escolha seus números, confira o resumo e reserve em segundos. O comprovante vai direto pelo Direct do Instagram.</p>
-
-      <div class="stats">
-        <div class="stat"><b id="statTotal">—</b><span>números</span></div>
-        <div class="stat"><b id="statPreco">—</b><span>por número</span></div>
-      </div>
-
-      <a href="#numeros" class="btn btn-primary">
-        Escolher meus números
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M5 12h14M13 6l6 6-6 6"/>
-        </svg>
-      </a>
+<header class="hero wrap">
+  <div class="hero-text">
+    <p class="eyebrow" id="eyebrow">Sorteio oficial</p>
+    <h1 id="titulo">Rifa</h1>
+    <p class="lead">Escolha seus números, confira o resumo e reserve em segundos. O comprovante vai direto pelo Direct do Instagram.</p>
+    <div class="stats">
+      <div class="stat"><b id="statTotal">—</b><span>números</span></div>
+      <div class="stat"><b id="statPreco">—</b><span>por número</span></div>
     </div>
-
-    <figure class="prize">
-      <img src="opd.jpg" alt="Prêmio do sorteio" id="prizeImg">
-      <div class="prize-fallback" id="prizeFallback" hidden>
-        <div class="fallback-text">Imagem do prêmio</div>
-        <div class="fallback-hint">coloque o arquivo <code>opd.jpg</code> na pasta do site</div>
-      </div>
-    </figure>
-  </header>
-
-  <main>
-    <section class="wrap" id="numeros">
-      <div class="section-head">
-        <h2>Escolha seus números</h2>
-        <p>Toque nos números disponíveis. O resumo aparece ao lado.</p>
-      </div>
-
-      <div class="status-row" aria-live="polite">
-        <span class="pill pill-cyan"><b id="cDisp">0</b> disponíveis</span>
-        <span class="pill pill-red"><b id="cRes">0</b> reservados</span>
-        <span class="pill pill-pink"><b id="cSel">0</b> selecionados</span>
-      </div>
-
-      <div class="progress"><span id="barra"></span></div>
-      <p class="progress-txt"><span id="progressoTxt">Carregando…</span></p>
-
-      <div class="layout">
-        <div class="grid-area">
-          <div class="legend">
-            <span><i class="dot dot-cyan"></i>Disponível</span>
-            <span><i class="dot dot-pink"></i>Selecionado</span>
-          </div>
-          <div id="grade" class="grid" role="group" aria-label="Números do sorteio"></div>
-        </div>
-
-        <aside class="summary">
-          <div class="summary-inner">
-            <h3>Seu resumo</h3>
-            <p class="empty" id="empty">Nenhum número selecionado ainda.</p>
-            <div class="chips" id="chips"></div>
-            <dl class="totais">
-              <div><dt>Números</dt><dd id="qtd">0</dd></div>
-              <div><dt>Total</dt><dd id="total">R$ 0,00</dd></div>
-            </dl>
-            <button class="btn btn-primary w100" id="btnReservar" disabled>Reservar agora</button>
-            <button class="btn btn-ghost w100" id="btnLimpar" disabled>Limpar seleção</button>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="wrap" id="regras">
-      <div class="section-head"><h2>Regras do sorteio</h2></div>
-      <ol class="rules">
-        <li><span>01</span> Escolha quantos números quiser, respeitando a disponibilidade.</li>
-        <li><span>02</span> Após reservar, guarde o código e envie o comprovante no Direct do Instagram.</li>
-        <li><span>03</span> Acompanhe os comunicados oficiais para atualizações.</li>
-        <li><span>04</span> Prêmio, encerramento e apuração serão publicados com clareza.</li>
-      </ol>
-    </section>
-
-    <section class="wrap" id="premio">
-      <div class="section-head"><h2>Prêmio e apuração</h2></div>
-      <dl class="info" id="info"></dl>
-    </section>
-  </main>
-
-  <footer class="wrap footer">
-    <p>© <span id="anoAtual"></span> <span id="footerNome">Rifa</span>.
-       Não coletamos dados pessoais neste site.</p>
-    <p class="small" id="autorizacaoP" hidden></p>
-  </footer>
-
-  <dialog id="modal" class="modal">
-    <form id="formReserva" method="dialog" novalidate>
-      <h3>Finalizar reserva</h3>
-      <p class="modal-sub">Preencha seus dados para reservar os números escolhidos.</p>
-      <div class="resumo-modal" id="resumoModal"></div>
-
-      <label>
-        <span>Nome completo</span>
-        <input type="text" name="nome" id="nome" required autocomplete="name"
-               maxlength="80" placeholder="Seu nome">
-      </label>
-
-      <label>
-        <span>Instagram</span>
-        <input type="text" name="instagram" id="instagram" required
-               maxlength="31" placeholder="@seu_usuario">
-      </label>
-
-      <div class="modal-actions">
-        <button type="button" class="btn btn-ghost" id="btnCancelar">Cancelar</button>
-        <button type="submit" class="btn btn-primary" id="btnConfirmar">Confirmar reserva</button>
-      </div>
-      <p class="modal-erro" id="modalErro" hidden></p>
-    </form>
-  </dialog>
-
-  <dialog id="modalOk" class="modal modal-ok">
-    <div class="ok-icon">✓</div>
-    <h3>Reserva confirmada!</h3>
-    <p>Guarde o código abaixo para conferência.</p>
-    <p class="codigo" id="codigoOk">—</p>
-    <p class="small" id="numsOk"></p>
-
-    <div class="ok-actions">
-      <button class="btn btn-ghost w100" id="btnCopiar" type="button">Copiar resumo</button>
-      <a class="btn btn-primary w100" id="btnInstagram" target="_blank" rel="noopener" hidden>
-        Enviar comprovante no Direct
-      </a>
-    </div>
-
-    <p class="small ok-hint">
-      Envie o comprovante do Pix no Direct junto com o resumo acima.
-    </p>
-    <a class="profile-link" id="btnPerfil" target="_blank" rel="noopener" hidden>
-      ou ver perfil @<span id="perfilHandle"></span>
+    <a href="#numeros" class="btn btn-primary">Escolher meus números
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <button class="btn btn-ghost w100" id="btnFecharOk" style="margin-top:10px">Fechar</button>
-  </dialog>
+  </div>
+  <figure class="prize">
+    <img src="opd.jpg" alt="Prêmio do sorteio" id="prizeImg">
+    <div class="prize-fallback" id="prizeFallback" hidden>
+      <div class="fallback-text">Imagem do prêmio</div>
+      <div class="fallback-hint">coloque o arquivo <code>opd.jpg</code> na pasta do site</div>
+    </div>
+  </figure>
+</header>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<main>
+  <section class="wrap" id="numeros">
+    <div class="section-head">
+      <h2>Escolha seus números</h2>
+      <p>Toque nos números disponíveis. O resumo aparece ao lado.</p>
+    </div>
+    <div class="status-row" aria-live="polite">
+      <span class="pill pill-cyan"><b id="cDisp">0</b> disponíveis</span>
+      <span class="pill pill-red"><b id="cRes">0</b> reservados</span>
+      <span class="pill pill-pink"><b id="cSel">0</b> selecionados</span>
+    </div>
+    <div class="progress"><span id="barra"></span></div>
+    <p class="progress-txt"><span id="progressoTxt">Carregando…</span></p>
+    <div class="layout">
+      <div class="grid-area">
+        <div class="legend">
+          <span><i class="dot dot-cyan"></i>Disponível</span>
+          <span><i class="dot dot-pink"></i>Selecionado</span>
+        </div>
+        <div id="grade" class="grid" role="group" aria-label="Números do sorteio"></div>
+      </div>
+      <aside class="summary">
+        <div class="summary-inner">
+          <h3>Seu resumo</h3>
+          <p class="empty" id="empty">Nenhum número selecionado ainda.</p>
+          <div class="chips" id="chips"></div>
+          <dl class="totais">
+            <div><dt>Números</dt><dd id="qtd">0</dd></div>
+            <div><dt>Total</dt><dd id="total">R$ 0,00</dd></div>
+          </dl>
+          <button class="btn btn-primary w100" id="btnReservar" disabled>Reservar agora</button>
+          <button class="btn btn-ghost w100" id="btnLimpar" disabled>Limpar seleção</button>
+        </div>
+      </aside>
+    </div>
+  </section>
 
-  <script src="js/config.js"></script>
-  <script src="js/reservados.js"></script>
-  <script src="js/app.js"></script>
+  <section class="wrap" id="regras">
+    <div class="section-head"><h2>Regras do sorteio</h2></div>
+    <ol class="rules">
+      <li><span>01</span> Escolha quantos números quiser, respeitando a disponibilidade.</li>
+      <li><span>02</span> Após reservar, guarde o código e envie o comprovante no Direct do Instagram.</li>
+      <li><span>03</span> Acompanhe os comunicados oficiais para atualizações.</li>
+      <li><span>04</span> Prêmio, encerramento e apuração serão publicados com clareza.</li>
+    </ol>
+  </section>
+
+  <section class="wrap" id="premio">
+    <div class="section-head"><h2>Prêmio e apuração</h2></div>
+    <dl class="info" id="info"></dl>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  <p>© <span id="anoAtual"></span> <span id="footerNome">Rifa</span>. Não coletamos dados pessoais neste site.</p>
+  <p class="small" id="autorizacaoP" hidden></p>
+</footer>
+
+<dialog id="modal" class="modal">
+  <form id="formReserva" method="dialog" novalidate>
+    <h3>Finalizar reserva</h3>
+    <p class="modal-sub">Preencha seus dados para reservar os números escolhidos.</p>
+    <div class="resumo-modal" id="resumoModal"></div>
+    <label><span>Nome completo</span><input type="text" name="nome" id="nome" required autocomplete="name" maxlength="80" placeholder="Seu nome"></label>
+    <label><span>Instagram</span><input type="text" name="instagram" id="instagram" required maxlength="31" placeholder="@seu_usuario"></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="btnCancelar">Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="btnConfirmar">Confirmar reserva</button>
+    </div>
+    <p class="modal-erro" id="modalErro" hidden></p>
+  </form>
+</dialog>
+
+<dialog id="modalOk" class="modal modal-ok">
+  <div class="ok-icon">✓</div>
+  <h3>Reserva confirmada!</h3>
+  <p>Guarde o código abaixo para conferência.</p>
+  <p class="codigo" id="codigoOk">—</p>
+  <p class="small" id="numsOk"></p>
+  <div class="ok-actions">
+    <button class="btn btn-ghost w100" id="btnCopiar" type="button">Copiar resumo</button>
+    <a class="btn btn-primary w100" id="btnInstagram" target="_blank" rel="noopener" hidden>Enviar comprovante no Direct</a>
+  </div>
+  <p class="small ok-hint">Envie o comprovante do Pix no Direct junto com o resumo acima.</p>
+  <a class="profile-link" id="btnPerfil" target="_blank" rel="noopener" hidden>ou ver perfil @<span id="perfilHandle"></span></a>
+  <button class="btn btn-ghost w100" id="btnFecharOk" style="margin-top:10px">Fechar</button>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   CONFIG — edite aqui
+   ============================================================ */
+window.RIFA_CONFIG = {
+  nome: 'Rifa 2026',
+  preco: 5.00,
+  totalNumeros: 250,
+  instagramOrganizador: 'daviafaz_',
+  premio: null,
+  dataSorteio: null,
+  metodoApuracao: null,
+  encerramento: null,
+  autorizacao: null,
+};
+
+/* ============================================================
+   RESERVADOS — coloque aqui os números já vendidos
+   ============================================================ */
+window.RIFA_RESERVADOS = [];
+</script>
+
+<script>
+(() => {
+  'use strict';
+  const CFG = window.RIFA_CONFIG || {};
+  const NOME = CFG.nome || 'Rifa';
+  const TOTAL = Math.max(1, Number(CFG.totalNumeros) || 250);
+  const PRECO = Math.max(0, Number(CFG.preco) || 5);
+  const INSTA = String(CFG.instagramOrganizador || '').replace(/^@+/, '').trim();
+  const STORAGE_KEY = 'rifa_reservas_v1';
+
+  const reservadosFixos = new Set(
+    (Array.isArray(window.RIFA_RESERVADOS) ? window.RIFA_RESERVADOS : [])
+      .map(Number).filter((n) => Number.isInteger(n) && n >= 1 && n <= TOTAL)
+  );
+  const reservasLocais = carregarReservasLocais();
+  const reservadosLocais = new Set(
+    reservasLocais.filter((r) => r && typeof r === 'object' && Array.isArray(r.numeros))
+      .flatMap((r) => r.numeros).map(Number)
+      .filter((n) => Number.isInteger(n) && n >= 1 && n <= TOTAL)
+  );
+  const estado = { reservados: new Set([...reservadosFixos, ...reservadosLocais]) };
+  const selecionados = new Set();
+
+  const $ = (s) => document.querySelector(s);
+  const grade = $('#grade'), cDisp = $('#cDisp'), cRes = $('#cRes'), cSel = $('#cSel');
+  const barra = $('#barra'), progressoTxt = $('#progressoTxt');
+  const chips = $('#chips'), vazio = $('#empty'), qtd = $('#qtd'), total = $('#total');
+  const btnReservar = $('#btnReservar'), btnLimpar = $('#btnLimpar');
+  const modal = $('#modal'), modalOk = $('#modalOk'), form = $('#formReserva');
+  const nomeInput = $('#nome'), instaInput = $('#instagram'), modalErro = $('#modalErro');
+  const resumoModal = $('#resumoModal'), codigoOk = $('#codigoOk'), numsOk = $('#numsOk');
+  const btnInstagram = $('#btnInstagram'), btnPerfil = $('#btnPerfil');
+  const perfilHandle = $('#perfilHandle'), btnCopiar = $('#btnCopiar'), toast = $('#toast');
+
+  const pad = (n) => String(n).padStart(3, '0');
+  const fmtBRL = (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  let toastTimer;
+  function mostrarToast(msg, ehErro = false) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.className = 'toast show' + (ehErro ? ' erro' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  const animacoes = new WeakMap();
+  function animarNumero(el, alvo, duracao = 400) {
+    if (!el) return;
+    const prev = animacoes.get(el);
+    if (prev) cancelAnimationFrame(prev);
+    const de = parseInt(el.textContent, 10) || 0;
+    if (de === alvo) { el.textContent = alvo; animacoes.delete(el); return; }
+    const t0 = performance.now();
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / duracao);
+      const v = Math.round(de + (alvo - de) * (1 - Math.pow(1 - p, 3)));
+      el.textContent = v;
+      if (p < 1) animacoes.set(el, requestAnimationFrame(step));
+      else animacoes.delete(el);
+    };
+    animacoes.set(el, requestAnimationFrame(step));
+  }
+
+  function gerarCodigo() {
+    const hex = 'ABCDEF0123456789';
+    let s = 'R';
+    for (let i = 0; i < 6; i++) s += hex[Math.floor(Math.random() * 16)];
+    return s;
+  }
+
+  function carregarReservasLocais() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.filter((r) => r && typeof r === 'object' && Array.isArray(r.numeros)) : [];
+    } catch (e) { console.warn('[RIFA] localStorage:', e); return []; }
+  }
+
+  function salvarReservaLocal(reserva) {
+    try {
+      const atuais = carregarReservasLocais();
+      atuais.push(reserva);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(atuais));
+      return true;
+    } catch (e) { console.warn('[RIFA] salvar:', e); return false; }
+  }
+
+  function setupImagemPremio() {
+    const img = $('#prizeImg'), fb = $('#prizeFallback');
+    if (!img || !fb) return;
+    const mostrarFb = () => { img.style.display = 'none'; fb.hidden = false; };
+    const mostrarImg = () => { img.style.display = ''; fb.hidden = true; };
+    img.addEventListener('load', mostrarImg);
+    img.addEventListener('error', mostrarFb);
+    if (img.complete) { if (img.naturalWidth > 0) mostrarImg(); else mostrarFb(); }
+  }
+
+  function aplicarConfig() {
+    document.title = `${NOME} — Escolha seu número`;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.content = `Sorteio com ${TOTAL} números, ${fmtBRL(PRECO)} cada.`;
+    $('#eyebrow').textContent = `Sorteio oficial • ${TOTAL} números`;
+    $('#titulo').textContent = NOME;
+    $('#footerNome').textContent = NOME;
+    $('#anoAtual').textContent = new Date().getFullYear();
+    $('#statTotal').textContent = TOTAL;
+    $('#statPreco').textContent = fmtBRL(PRECO);
+    const campos = [
+      ['Prêmio', CFG.premio],
+      ['Data do sorteio', CFG.dataSorteio],
+      ['Encerramento', CFG.encerramento],
+      ['Apuração', CFG.metodoApuracao],
+    ];
+    $('#info').innerHTML = campos.map(([r, v]) => `<div><dt>${r}</dt><dd>${v ? escapeHtml(v) : 'A definir'}</dd></div>`).join('');
+    if (CFG.autorizacao) {
+      const aut = $('#autorizacaoP');
+      aut.textContent = 'Autorização: ' + CFG.autorizacao;
+      aut.hidden = false;
+    }
+  }
+
+  let primeiraRenderizacao = true;
+  function renderizarGrade() {
+    if (!grade) return;
+    const frag = document.createDocumentFragment();
+    let idx = 0;
+    for (let i = 1; i <= TOTAL; i++) {
+      if (estado.reservados.has(i)) continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'num';
+      btn.style.setProperty('--i', primeiraRenderizacao ? idx++ : 0);
+      btn.dataset.n = i;
+      btn.textContent = pad(i);
+      if (selecionados.has(i)) btn.classList.add('sel');
+      btn.setAttribute('aria-label', `Número ${pad(i)} ${selecionados.has(i) ? 'selecionado' : 'disponível'}`);
+      btn.setAttribute('aria-pressed', selecionados.has(i) ? 'true' : 'false');
+      frag.appendChild(btn);
+    }
+    grade.innerHTML = '';
+    grade.appendChild(frag);
+    if (!primeiraRenderizacao) grade.classList.add('re-render');
+    primeiraRenderizacao = false;
+    atualizarContadores();
+    atualizarResumo();
+  }
+
+  function atualizarContadores() {
+    const ocupados = estado.reservados.size;
+    const disp = Math.max(0, TOTAL - ocupados);
+    animarNumero(cDisp, disp);
+    animarNumero(cRes, ocupados);
+    animarNumero(cSel, selecionados.size);
+    const pct = TOTAL ? Math.round((ocupados / TOTAL) * 100) : 0;
+    if (barra) barra.style.width = pct + '%';
+    if (progressoTxt) progressoTxt.textContent = `${ocupados} de ${TOTAL} números já reservados (${pct}%)`;
+  }
+
+  function atualizarResumo() {
+    const n = selecionados.size;
+    if (qtd) qtd.textContent = n;
+    if (total) total.textContent = fmtBRL(n * PRECO);
+    if (vazio) vazio.hidden = n > 0;
+    if (chips) {
+      chips.innerHTML = '';
+      [...selecionados].sort((a, b) => a - b).forEach((num) => {
+        const c = document.createElement('span');
+        c.className = 'chip';
+        c.textContent = pad(num);
+        chips.appendChild(c);
+      });
+    }
+    if (btnReservar) btnReservar.disabled = n === 0;
+    if (btnLimpar) btnLimpar.disabled = n === 0;
+  }
+
+  if (grade) {
+    grade.addEventListener('click', (e) => {
+      const btn = e.target.closest('.num');
+      if (!btn || btn.disabled) return;
+      const n = Number(btn.dataset.n);
+      if (!Number.isInteger(n) || n < 1 || n > TOTAL) return;
+      if (estado.reservados.has(n)) return;
+      if (selecionados.has(n)) selecionados.delete(n); else selecionados.add(n);
+      if (selecionados.has(n)) {
+        btn.classList.add('sel');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('aria-label', `Número ${pad(n)} selecionado`);
+      } else {
+        btn.classList.remove('sel');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', `Número ${pad(n)} disponível`);
+      }
+      atualizarContadores();
+      atualizarResumo();
+    });
+  }
+
+  if (btnLimpar) btnLimpar.addEventListener('click', () => { selecionados.clear(); renderizarGrade(); });
+
+  if (btnReservar) {
+    btnReservar.addEventListener('click', () => {
+      if (selecionados.size === 0) return;
+      const lista = [...selecionados].sort((a, b) => a - b).map(pad).join(', ');
+      resumoModal.innerHTML = `<b>${selecionados.size} número${selecionados.size > 1 ? 's' : ''}</b><br>${lista}<br><br>Total: <b>${fmtBRL(selecionados.size * PRECO)}</b>`;
+      modalErro.hidden = true;
+      form.reset();
+      modal.showModal();
+      setTimeout(() => nomeInput.focus(), 100);
+    });
+  }
+
+  $('#btnCancelar')?.addEventListener('click', () => modal.close());
+  $('#btnFecharOk')?.addEventListener('click', () => modalOk.close());
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      modalErro.hidden = true;
+      if (selecionados.size === 0) return erroModal('Selecione pelo menos um número.');
+      const nome = nomeInput.value.trim();
+      const instagram = instaInput.value.trim().replace(/^@+/, '');
+      if (nome.length < 2) return erroModal('Informe seu nome completo.');
+      if (!/^[A-Za-z0-9._]{2,30}$/.test(instagram)) return erroModal('Instagram inválido. Use letras, números, . ou _ (sem @).');
+      const reserva = {
+        id: gerarCodigo(),
+        numeros: [...selecionados].sort((a, b) => a - b),
+        nome, instagram,
+        data: new Date().toISOString(),
+      };
+      const salvou = salvarReservaLocal(reserva);
+      reserva.numeros.forEach((n) => estado.reservados.add(n));
+      sucesso(reserva, salvou);
+    });
+  }
+
+  function erroModal(msg) {
+    if (!modalErro) return;
+    modalErro.textContent = msg;
+    modalErro.hidden = false;
+  }
+
+  function sucesso(reserva, salvou) {
+    modal.close();
+    codigoOk.textContent = reserva.id;
+    numsOk.textContent = 'Números: ' + reserva.numeros.map(pad).join(', ');
+    const texto =
+      `Olá! Fiz a reserva ${reserva.id}.\n` +
+      `Números: ${reserva.numeros.map(pad).join(', ')}\n` +
+      `Total: ${fmtBRL(reserva.numeros.length * PRECO)}\n` +
+      `Nome: ${reserva.nome}\n` +
+      `Instagram: @${reserva.instagram}`;
+    btnCopiar.onclick = async () => {
+      try { await navigator.clipboard.writeText(texto); }
+      catch {
+        const ta = document.createElement('textarea');
+        ta.value = texto; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove();
+      }
+      btnCopiar.textContent = '✓ Copiado!';
+      setTimeout(() => (btnCopiar.textContent = 'Copiar resumo'), 1800);
+    };
+    if (INSTA) {
+      btnInstagram.href = `https://ig.me/m/${encodeURIComponent(INSTA)}`;
+      btnInstagram.hidden = false;
+      btnPerfil.href = `https://instagram.com/${encodeURIComponent(INSTA)}`;
+      perfilHandle.textContent = INSTA;
+      btnPerfil.hidden = false;
+    } else {
+      btnInstagram.hidden = true;
+      btnPerfil.hidden = true;
+    }
+    modalOk.showModal();
+    selecionados.clear();
+    reserva.numeros.forEach((n) => {
+      const el = grade.querySelector(`[data-n="${n}"]`);
+      if (el) el.classList.add('removendo');
+    });
+    atualizarContadores();
+    atualizarResumo();
+    setTimeout(() => {
+      renderizarGrade();
+      mostrarToast(salvou ? 'Reserva registrada! Envie o comprovante no Direct.' : 'Reserva feita, mas não salva. Guarde o código!', !salvou);
+    }, 400);
+  }
+
+  (function init() {
+    setupImagemPremio();
+    aplicarConfig();
+    renderizarGrade();
+    if (!INSTA) console.warn('[RIFA] Configure instagramOrganizador.');
+  })();
+})();
+</script>
 </body>
 </html>
