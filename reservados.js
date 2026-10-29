@@ -24,4 +24,4 @@
      número da grade. Só os números escritos na lista abaixo ficam
      bloqueados, e só quando você colocar.
    ============================================================ */
-window.RIFA_RESERVADOS = [1,2];
+window.RIFA_RESERVADOS = [];
