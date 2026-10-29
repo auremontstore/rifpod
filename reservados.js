@@ -23,4 +23,4 @@
    - Reservas de teste ficam salvas no navegador. Para apagar, cole
      no Console:  localStorage.removeItem('rifa_reservas_v1')
    ============================================================ */
-window.RIFA_RESERVADOS = [1,2];
+window.RIFA_RESERVADOS = [];
