@@ -19,4 +19,4 @@
 
    Os números vão de 1 a 250 (veja totalNumeros no index.html).
    ============================================================ */
-window.RIFA_RESERVADOS = [];
+window.RIFA_RESERVADOS = [001, 002];
